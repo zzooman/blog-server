@@ -3,7 +3,10 @@ import { Post as IPost, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class ArticleService {
-  constructor(private readonly prisma: PrismaClient = new PrismaClient()) {}
+  private prisma: PrismaClient;
+  constructor() {
+    this.prisma = new PrismaClient();
+  }
 
   async createArticle(payload: Partial<IPost>): Promise<IPost> {
     const newPost = await this.prisma.post.create({

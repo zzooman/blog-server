@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { env } from 'process';
 import { CreateUserPayload, User } from 'src/types/types';
 
 @Injectable()
@@ -12,7 +11,7 @@ export class UserService {
   }: CreateUserPayload): Promise<User> {
     try {
       const response = await fetch(
-        `${env.AUTH_API_URL}/v1/login?id=${userId}&password=${password}`,
+        `${process.env.AUTH_API_URL}/v1/login?id=${userId}&password=${password}`,
       );
       const data = await response.json();
       console.log('data', data);
@@ -21,6 +20,7 @@ export class UserService {
         data: {
           userId,
           division,
+          password,
         },
       });
       return createdUser;

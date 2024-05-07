@@ -9,5 +9,6 @@ export interface CreateUserPayload {
 export interface User {
   id: number;
   userId: string;
+  password: string;
   division: $Enums.Division;
 }
