@@ -15,17 +15,17 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post('/create')
-  async createUser(@Body() body: Partial<IPost>): Promise<IPost> {
+  async create(@Body() body: Partial<IPost>): Promise<IPost> {
     return await this.articleService.createArticle(body);
   }
 
   @Get('/:id')
-  async readUser(@Param('id') id: string): Promise<IPost> {
+  async read(@Param('id') id: string): Promise<IPost> {
     return await this.articleService.getArticle(parseInt(id));
   }
 
   @Put('/:id')
-  async updateUser(
+  async update(
     @Param('id') id: string,
     @Body() body: Partial<IPost>,
   ): Promise<IPost> {
@@ -33,7 +33,7 @@ export class ArticleController {
   }
 
   @Delete('/:id')
-  async deleteUser(@Param('id') id: string): Promise<IPost> {
+  async delete(@Param('id') id: string): Promise<IPost> {
     return await this.articleService.deleteArticle(parseInt(id));
   }
 }
