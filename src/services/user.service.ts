@@ -1,49 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { MemberLoginResponse } from 'src/types/dto';
-import { CreateUserPayload, LoginUserParams, User } from 'src/types/types';
+import { CreateUserDto, User } from 'src/types/types';
 
 @Injectable()
 export class UserService {
-  async createUser({
-    userId,
-    password,
-    division,
-  }: CreateUserPayload): Promise<User> {
-    try {
-      const response = await fetch(
-        `${process.env.AUTH_API_URL}/v1/login/${userId}?password=${password}`,
-      );
-      const data: MemberLoginResponse = await response.json();
-      const prisma = new PrismaClient();
-      const existUser = await prisma.user.findFirst({
-        where: {
-          userId: userId,
-        },
-      });
-      if (existUser) return existUser;
-      if (data.name) {
-        const createdUser = await prisma.user.create({
-          data: {
-            userId,
-            division,
-            password,
-          },
-        });
-        return createdUser;
-      }
-    } catch (e) {
-      console.log(e);
-    }
+  async findOne(username: string): Promise<User> {
+    const prisma = new PrismaClient();
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+    return user;
   }
 
-  async login({ userId, password }: LoginUserParams): Promise<User> {
+  async create({ username, password, division }: CreateUserDto): Promise<User> {
     const prisma = new PrismaClient();
-    const user = prisma.user.findFirst({
-      where: {
-        userId: userId,
-        password: password,
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password,
+        division,
       },
+    });
+    return user;
+  }
+
+  async update(
+    username: string,
+    { username: newUsername, password, division }: CreateUserDto,
+  ): Promise<User> {
+    const prisma = new PrismaClient();
+    const user = await prisma.user.update({
+      where: { username },
+      data: {
+        username: newUsername,
+        password,
+        division,
+      },
+    });
+    return user;
+  }
+
+  async deleteUser(username: string): Promise<User> {
+    const prisma = new PrismaClient();
+    const user = await prisma.user.delete({
+      where: { username },
     });
     return user;
   }
