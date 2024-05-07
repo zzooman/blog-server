@@ -25,6 +25,7 @@ services:
       - mustit-blog-db
     networks:
       - mustit-blog
+    command: npx prisma migrate dev --name init
 
   nginx:
     image: nginx:latest
