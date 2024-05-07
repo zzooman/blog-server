@@ -8,12 +8,12 @@ export class ArticleService {
     this.prisma = new PrismaClient();
   }
 
-  async createArticle(payload: Partial<IPost>): Promise<IPost> {
+  async createArticle(payload: Partial<IPost>, user: any): Promise<IPost> {
     const newPost = await this.prisma.post.create({
       data: {
         title: payload.title,
         content: payload.content,
-        authorId: payload.authorId,
+        authorId: user.id,
       },
     });
     return newPost;

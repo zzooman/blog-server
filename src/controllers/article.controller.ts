@@ -6,17 +6,24 @@ import {
   Param,
   Post,
   Put,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { Post as IPost } from '@prisma/client';
+import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
 
 @Controller('/article')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  @UseGuards(AuthGuard)
   @Post('/create')
-  async create(@Body() body: Partial<IPost>): Promise<IPost> {
-    return await this.articleService.createArticle(body);
+  async create(
+    @Request() req: any,
+    @Body() body: Partial<IPost>,
+  ): Promise<IPost> {
+    return await this.articleService.createArticle(body, req.user);
   }
 
   @Get('/:id')
