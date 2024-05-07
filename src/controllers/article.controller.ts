@@ -20,20 +20,20 @@ export class ArticleController {
   }
 
   @Get('/:id')
-  async readUser(@Param() id: string): Promise<IPost> {
+  async readUser(@Param('id') id: string): Promise<IPost> {
     return await this.articleService.getArticle(parseInt(id));
   }
 
   @Put('/:id')
   async updateUser(
-    @Param() id: string,
+    @Param('id') id: string,
     @Body() body: Partial<IPost>,
   ): Promise<IPost> {
     return await this.articleService.updateArticle(parseInt(id), body);
   }
 
   @Delete('/:id')
-  async deleteUser(@Param() id: string): Promise<IPost> {
+  async deleteUser(@Param('id') id: string): Promise<IPost> {
     return await this.articleService.deleteArticle(parseInt(id));
   }
 }
