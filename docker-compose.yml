@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  mustit-blog-db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=mustit
+      - POSTGRES_PASSWORD=mustit
+      - POSTGRES_USER=postgres
+    container_name: mustit-blog-db
+    ports:
+      - '5432:5432'
+    networks:
+      - mustit-blog
+
+  mustit-blog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mustit-blog
+    environment:
+      - PORT=${PORT}
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mustit-blog-db
+    networks:
+      - mustit-blog
+
+  nginx:
+    image: nginx:latest
+    container_name: mustit-blog-nginx
+    ports:
+      - '80:80'
+    depends_on:
+      - mustit-blog
+    networks:
+      - mustit-blog
+
+networks:
+  mustit-blog:
