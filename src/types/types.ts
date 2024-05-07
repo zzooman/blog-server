@@ -1,12 +1,13 @@
 import { $Enums } from '@prisma/client';
 
 export interface CreateUserPayload {
-  email: string;
+  userId: string;
+  password: string;
   division: $Enums.Division;
 }
 
 export interface User {
   id: number;
-  email: string;
+  userId: string;
   division: $Enums.Division;
 }

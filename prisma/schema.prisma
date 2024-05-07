@@ -13,7 +13,7 @@ enum Division {
 }
 model User {
   id    Int     @default(autoincrement()) @id
-  email String  @unique
+  userId String  @unique  
   division Division 
   posts Post[]  
 }
