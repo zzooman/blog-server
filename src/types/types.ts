@@ -1,15 +1,12 @@
-import { Prisma } from '@prisma/client';
+import { $Enums } from '@prisma/client';
 
 export interface CreateUserPayload {
   email: string;
-  division: Division;
+  division: $Enums.Division;
 }
-export enum Division {
-  frontend = 'frontend',
-  backend = 'backend',
-}
+
 export interface User {
   id: number;
   email: string;
-  division: Prisma;
+  division: $Enums.Division;
 }
