@@ -3,7 +3,8 @@ import { ArticleController } from 'src/controllers/article.controller';
 import { ArticleService } from 'src/services/article.service';
 
 @Module({
-  providers: [ArticleController],
-  exports: [ArticleService],
+  providers: [ArticleService],
+  controllers: [ArticleController],
+  exports: [],
 })
 export class ArticleModule {}
