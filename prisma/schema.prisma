@@ -7,14 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Status {
+enum Division {
   frontend
   backend  
 }
 model User {
   id    Int     @default(autoincrement()) @id
   email String  @unique
-  division Status 
+  division Division 
   posts Post[]  
 }
 

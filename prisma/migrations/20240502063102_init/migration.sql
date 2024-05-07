@@ -1,11 +1,11 @@
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('frontend', 'backend');
+CREATE TYPE "Division" AS ENUM ('frontend', 'backend');
 
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
-    "division" "Status" NOT NULL,
+    "division" "Division" NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
