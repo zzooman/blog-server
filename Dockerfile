@@ -4,17 +4,15 @@ WORKDIR /app
 
 COPY package*.json ./
 
+COPY prisma ./prisma/
+
 RUN npm install
 
 RUN npm install -g prisma
 
-RUN npx prisma init
-
 COPY . .
 
 RUN npx prisma generate
-
-RUN npx prisma migrate deploy
 
 RUN npm run build
 
