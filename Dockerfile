@@ -6,6 +6,8 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN npm install -g prisma
+
 RUN npx prisma init
 
 RUN npx prisma migrate dev --name init
