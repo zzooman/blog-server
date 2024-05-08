@@ -14,7 +14,7 @@ services:
     volumes:
       - ./prisma:/prisma
     networks:
-      - mustit-blog
+      - mustit-blog-network
 
   mustit-blog-app:
     build:
@@ -30,7 +30,7 @@ services:
     volumes:
       - ./prisma:/app/prisma
     networks:
-      - mustit-blog
+      - mustit-blog-network
     command: npx prisma migrate deploy && npm run start:prod
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U root -h mustit-blog-db']
@@ -41,5 +41,5 @@ services:
     restart: on-failure
 
 networks:
-  mustit-blog:
+  mustit-blog-network:
     driver: bridge
