@@ -22,24 +22,14 @@ services:
       dockerfile: Dockerfile
     container_name: mustit-blog-app
     ports:
-      - '3000:3000'
+      - '9900:9900'
     environment:
       - POSTGRES_HOST=mustit-blog-db
     depends_on:
       - mustit-blog-db
     volumes:
       - ./prisma:/app/prisma
-    command: sh -c "npx prisma migrate dev && npm run start:dev"
-    networks:
-      - mustit-blog
-
-  nginx:
-    image: nginx:latest
-    container_name: mustit-blog-nginx
-    ports:
-      - '80:80'
-    depends_on:
-      - mustit-blog-app
+    command: sh -c "npx prisma migrate deploy && npm run start:prod"
     networks:
       - mustit-blog
 
