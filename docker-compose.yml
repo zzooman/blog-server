@@ -21,6 +21,8 @@ services:
     container_name: mustit-blog-app
     ports:
       - '3000:3000'
+    environment:
+      - POSTGRES_HOST=mustit-blog-db
     depends_on:
       - mustit-blog-db
     networks:
