@@ -29,7 +29,7 @@ services:
       - mustit-blog-db
     volumes:
       - ./prisma:/app/prisma
-    command: sh -c "npx prisma migrate deploy && npm run start:dev"
+    command: sh -c "npx prisma migrate dev && npm run start:dev"
     networks:
       - mustit-blog
 
