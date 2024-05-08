@@ -1,5 +1,4 @@
 version: '3.9'
-
 services:
   mustit-blog-db:
     image: postgres:16
@@ -15,6 +14,11 @@ services:
       - ./prisma:/prisma
     networks:
       - mustit-blog-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U root']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mustit-blog-app:
     build:
@@ -26,18 +30,13 @@ services:
     environment:
       - POSTGRES_HOST=mustit-blog-db
     depends_on:
-      - mustit-blog-db
+      mustit-blog-db:
+        condition: service_healthy
     volumes:
       - ./prisma:/app/prisma
     networks:
       - mustit-blog-network
-    command: npx prisma migrate deploy && npm run start:prod
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U root -h mustit-blog-db']
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+    command: /bin/sh -c "sleep 10 && npx prisma migrate deploy && npm run start:prod"
     restart: on-failure
 
 networks:
