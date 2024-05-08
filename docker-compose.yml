@@ -31,6 +31,7 @@ services:
       - ./prisma:/app/prisma
     networks:
       - mustit-blog
+    command: npx prisma migrate deploy && npm run start:prod
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U root -h mustit-blog-db']
       interval: 10s
@@ -41,3 +42,4 @@ services:
 
 networks:
   mustit-blog:
+    driver: bridge
