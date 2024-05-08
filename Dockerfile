@@ -18,4 +18,4 @@ RUN npx prisma migrate deploy
 
 RUN npm run build
 
-CMD ["npm", "start:prod"]
+CMD ["npm", "run", "start:migrate:prod"]
