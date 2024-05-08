@@ -11,6 +11,8 @@ services:
     container_name: mustit-blog-db
     ports:
       - '5432:5432'
+    volumes:
+      - ./prisma:/prisma
     networks:
       - mustit-blog
 
@@ -25,6 +27,9 @@ services:
       - POSTGRES_HOST=mustit-blog-db
     depends_on:
       - mustit-blog-db
+    volumes:
+      - ./prisma:/app/prisma
+    command: sh -c "npx prisma migrate deploy && npm run start:dev"
     networks:
       - mustit-blog
 
