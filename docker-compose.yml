@@ -26,7 +26,7 @@ services:
       dockerfile: Dockerfile
     container_name: mustit-blog-app
     ports:
-      - '9900:9900'
+      - '80:9900'
     environment:
       - POSTGRES_HOST=mustit-blog-db
     depends_on:
