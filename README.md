@@ -13,3 +13,9 @@
 1. npm run start:dev
 1. npx prisma generate
 1. npx prisma migrate dev --name init
+
+## prod 모드로 실행방법 (docker-compose 사용)
+
+1. .env 수정
+   DATABASE_URL="postgresql://postgres:1033@mustit-blog-db:5432/mustit?schema=public"
+2. docker compose up
