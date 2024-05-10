@@ -34,6 +34,11 @@ export class ArticleService {
     return post;
   }
 
+  async getAllArticles(): Promise<IPost[]> {
+    const posts = await this.prisma.post.findMany();
+    return posts;
+  }
+
   async updateArticle(id: number, payload: Partial<IPost>): Promise<IPost> {
     const updatedPost = await this.prisma.post.update({
       where: {

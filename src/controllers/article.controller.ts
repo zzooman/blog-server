@@ -31,6 +31,11 @@ export class ArticleController {
     return await this.articleService.getArticle(parseInt(id));
   }
 
+  @Get()
+  async readAll(): Promise<IPost[]> {
+    return await this.articleService.getAllArticles();
+  }
+
   @Put('/:id')
   async update(
     @Param('id') id: string,
