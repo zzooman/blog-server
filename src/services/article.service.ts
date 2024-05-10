@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Post as IPost, PrismaClient } from '@prisma/client';
 
 @Injectable()
@@ -9,6 +9,12 @@ export class ArticleService {
   }
 
   async createArticle(payload: Partial<IPost>, user: any): Promise<IPost> {
+    if (!payload.title) {
+      throw new BadRequestException('제목을 입력해주세요');
+    }
+    if (!payload.content) {
+      throw new BadRequestException('내용을 입력해주세요');
+    }
     const newPost = await this.prisma.post.create({
       data: {
         title: payload.title,
