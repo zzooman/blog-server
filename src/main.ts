@@ -13,12 +13,11 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
-  app.use(cookieParser());
   app.enableCors({
-    origin: true,
+    origin: 'http://localhost:3000',
     credentials: true, // 크로스 도메인 요청에도 쿠키 전송
   });
+  app.use(cookieParser());
 
   await app.listen(9900);
 }

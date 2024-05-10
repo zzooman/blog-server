@@ -3,4 +3,4 @@ export const jwtConstants = {
     'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
 };
 
-export const BLOG_ACCESS_TOKEN = 'BLOG_ACCESS_TOKEN';
+export const ACCESS_TOKEN = 'access_token';
