@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { CreateUserDto, User } from 'src/types/types';
 
@@ -14,14 +14,20 @@ export class UserService {
 
   async create({ username, password, division }: CreateUserDto): Promise<User> {
     const prisma = new PrismaClient();
-    const user = await prisma.user.create({
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+    if (user) {
+      throw new ForbiddenException('이미 존재하는 유저입니다.');
+    }
+    const newUser = await prisma.user.create({
       data: {
         username,
         password,
         division,
       },
     });
-    return user;
+    return newUser;
   }
 
   async update(

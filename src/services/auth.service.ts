@@ -17,8 +17,11 @@ export class AuthService {
     @Res() response: Response,
   ): Promise<Response> {
     const user = await this.userService.findOne(username);
+    if (!user) {
+      throw new UnauthorizedException('존재하지 않는 유저입니다.');
+    }
     if (user?.password !== pass) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
     const payload = { id: user.id, username: user.username };
     const access_token = await this.jwtService.signAsync(payload);
