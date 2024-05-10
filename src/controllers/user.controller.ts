@@ -7,17 +7,16 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { UserService } from 'src/services/user.service';
 import { CreateUserDto } from 'src/types/dto';
-import { User } from 'src/types/types';
+import { IResponse, User } from 'src/types/types';
 
 @Controller('/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/create')
-  async create(@Body() createUserDto: CreateUserDto): Promise<Response> {
+  async create(@Body() createUserDto: CreateUserDto): Promise<IResponse<User>> {
     return await this.userService.create(createUserDto);
   }
 
