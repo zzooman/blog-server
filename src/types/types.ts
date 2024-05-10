@@ -26,3 +26,9 @@ export interface MemberLoginResponse {
   gender: string;
   userExternalId: string;
 }
+
+export interface IResponse<T> {
+  status: number;
+  message: string;
+  data: T;
+}

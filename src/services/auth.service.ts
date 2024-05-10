@@ -30,6 +30,10 @@ export class AuthService {
       secure: false,
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
-    return response.send({ message: 'success' });
+    return response.json({
+      status: 200,
+      message: '로그인 성공',
+      data: user,
+    });
   }
 }
