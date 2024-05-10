@@ -12,6 +12,7 @@ import {
 import { Post as IPost } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
+import { CreateArticleDto } from 'src/types/dto';
 
 @Controller('/article')
 export class ArticleController {
@@ -21,7 +22,7 @@ export class ArticleController {
   @Post('/create')
   async create(
     @Request() req: any,
-    @Body() body: Partial<IPost>,
+    @Body() body: CreateArticleDto,
   ): Promise<IPost> {
     return await this.articleService.createArticle(body, req.user);
   }
@@ -39,7 +40,7 @@ export class ArticleController {
   @Put('/:id')
   async update(
     @Param('id') id: string,
-    @Body() body: Partial<IPost>,
+    @Body() body: CreateArticleDto,
   ): Promise<IPost> {
     return await this.articleService.updateArticle(parseInt(id), body);
   }

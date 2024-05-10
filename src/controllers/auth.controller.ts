@@ -12,6 +12,7 @@ import {
 import { Response } from 'express';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { AuthService } from 'src/services/auth.service';
+import { LoginDto } from 'src/types/dto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,10 +20,10 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>, @Res() response: Response) {
+  signIn(@Body() payload: LoginDto, @Res() response: Response) {
     return this.authService.signIn(
-      signInDto.username,
-      signInDto.password,
+      payload.username,
+      payload.password,
       response,
     );
   }

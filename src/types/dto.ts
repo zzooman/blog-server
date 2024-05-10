@@ -1,19 +1,35 @@
-export interface MemberLoginResponse {
-  memberNo: number;
-  sellerNo: unknown;
-  isLogin: boolean;
-  isUnder14: boolean;
-  isSellerApproved: unknown;
-  userId: string;
-  memberType: string;
-  membershipGradeName: string;
-  membershipGradeLevel: number;
-  sellerCreditGradeCode: string;
-  sellerCreditScore: number;
-  name: string;
-  isEmployee: boolean;
-  employeeId: unknown;
-  employeeTeam: unknown;
-  gender: string;
-  userExternalId: string;
+import { ApiProperty } from '@nestjs/swagger';
+import { $Enums } from '@prisma/client';
+
+export class CreateUserDto {
+  @ApiProperty()
+  username: string;
+
+  @ApiProperty()
+  password: string;
+
+  @ApiProperty()
+  division: $Enums.Division;
+}
+
+export class LoginDto {
+  @ApiProperty()
+  username: string;
+
+  @ApiProperty()
+  password: string;
+}
+
+export class CreateArticleDto {
+  @ApiProperty()
+  title: string;
+
+  @ApiProperty()
+  content: string;
+
+  @ApiProperty({ required: false })
+  thumbnail?: string;
+
+  @ApiProperty({ required: false })
+  published: boolean;
 }
