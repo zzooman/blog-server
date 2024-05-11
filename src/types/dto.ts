@@ -27,6 +27,9 @@ export class CreateArticleDto {
   @ApiProperty()
   content: string;
 
+  @ApiProperty()
+  lowContent: string;
+
   @ApiProperty({ required: false })
   thumbnail?: string;
 

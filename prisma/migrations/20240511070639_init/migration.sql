@@ -16,6 +16,7 @@ CREATE TABLE "Post" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
+    "lowContent" TEXT NOT NULL,
     "published" BOOLEAN NOT NULL DEFAULT true,
     "thumbnail" TEXT,
     "likes" INTEGER NOT NULL DEFAULT 0,

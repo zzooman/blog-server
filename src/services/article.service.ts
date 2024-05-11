@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Post as IPost, PrismaClient } from '@prisma/client';
-import { Response, response } from 'express';
+import { IResponse } from 'src/types/types';
 
 @Injectable()
 export class ArticleService {
@@ -9,25 +9,32 @@ export class ArticleService {
     this.prisma = new PrismaClient();
   }
 
-  async createArticle(payload: Partial<IPost>, user: any): Promise<Response> {
+  async createArticle(
+    payload: Partial<IPost>,
+    user: any,
+  ): Promise<IResponse<IPost>> {
     if (!payload.title) {
       throw new BadRequestException('제목을 입력해주세요');
     }
     if (!payload.content) {
       throw new BadRequestException('내용을 입력해주세요');
     }
+    if (!payload.lowContent) {
+      throw new BadRequestException('lowContent 값을 보내주세요');
+    }
     const newPost = await this.prisma.post.create({
       data: {
         title: payload.title,
         content: payload.content,
+        lowContent: payload.lowContent,
         authorId: user.id,
       },
     });
-    return response.json({
+    return {
       status: 200,
       message: '게시글 생성 성공',
       data: newPost,
-    });
+    };
   }
 
   async getArticle(id: number): Promise<IPost> {

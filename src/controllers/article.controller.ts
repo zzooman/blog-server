@@ -10,10 +10,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Post as IPost } from '@prisma/client';
-import { Response } from 'express';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
 import { CreateArticleDto } from 'src/types/dto';
+import { IResponse } from 'src/types/types';
 
 @Controller('/article')
 export class ArticleController {
@@ -24,7 +24,7 @@ export class ArticleController {
   async create(
     @Request() req: any,
     @Body() body: CreateArticleDto,
-  ): Promise<Response> {
+  ): Promise<IResponse<IPost>> {
     return await this.articleService.createArticle(body, req.user);
   }
 
