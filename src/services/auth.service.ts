@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
-import { ACCESS_TOKEN } from 'src/types/constants';
+import { ACCESS_TOKEN, USER_NAME } from 'src/types/constants';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +27,11 @@ export class AuthService {
     const access_token = await this.jwtService.signAsync(payload);
     response.cookie(ACCESS_TOKEN, access_token, {
       httpOnly: true,
+      secure: false,
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    });
+    response.cookie(USER_NAME, user.username, {
+      httpOnly: false,
       secure: false,
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
