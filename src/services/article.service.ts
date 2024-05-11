@@ -22,6 +22,9 @@ export class ArticleService {
     if (!payload.lowContent) {
       throw new BadRequestException('lowContent 값을 보내주세요');
     }
+    if (!user) {
+      throw new BadRequestException('로그인이 필요합니다');
+    }
     const newPost = await this.prisma.post.create({
       data: {
         title: payload.title,

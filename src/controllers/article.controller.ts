@@ -22,7 +22,7 @@ export class ArticleController {
   @UseGuards(AuthGuard)
   @Post('/create')
   async create(
-    @Request() req: any,
+    @Request() req: Request & { user: any },
     @Body() body: CreateArticleDto,
   ): Promise<IResponse<IPost>> {
     return await this.articleService.createArticle(body, req.user);
