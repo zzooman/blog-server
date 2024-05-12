@@ -41,3 +41,14 @@ export class CreateCommentDto {
   @ApiProperty()
   content: string;
 }
+
+export class GetArticlesDto {
+  @ApiProperty()
+  page: number;
+
+  @ApiProperty()
+  offset: number;
+
+  @ApiProperty({ required: false })
+  keyword?: string;
+}

@@ -13,7 +13,11 @@ import {
 import { Comment, Article } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
-import { CreateArticleDto, CreateCommentDto } from 'src/types/dto';
+import {
+  CreateArticleDto,
+  CreateCommentDto,
+  GetArticlesDto,
+} from 'src/types/dto';
 import { IResponse, ArticleDetail, ArticlesResponse } from 'src/types/types';
 
 @Controller('/article')
@@ -38,15 +42,11 @@ export class ArticleController {
   }
 
   @Get()
-  async readAll(
-    @Query('page') page: string,
-    @Query('offset') offset: string,
-    @Query('keyword') keyword?: string,
-  ): Promise<ArticlesResponse> {
+  async readAll(@Query() query: GetArticlesDto): Promise<ArticlesResponse> {
     return await this.articleService.getAllArticles(
-      Number(page),
-      Number(offset),
-      keyword,
+      Number(query.page),
+      Number(query.offset),
+      query.keyword,
     );
   }
 
