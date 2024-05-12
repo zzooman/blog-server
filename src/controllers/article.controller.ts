@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { Comment, Article } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
 import { CreateArticleDto, CreateCommentDto } from 'src/types/dto';
-import { IResponse, ArticleDetail } from 'src/types/types';
+import { IResponse, ArticleDetail, ArticlesResponse } from 'src/types/types';
 
 @Controller('/article')
 export class ArticleController {
@@ -37,8 +38,16 @@ export class ArticleController {
   }
 
   @Get()
-  async readAll(): Promise<Article[]> {
-    return await this.articleService.getAllArticles();
+  async readAll(
+    @Query('page') page: string,
+    @Query('offset') offset: string,
+    @Query('keyword') keyword: string,
+  ): Promise<ArticlesResponse> {
+    return await this.articleService.getAllArticles(
+      Number(page),
+      Number(offset),
+      keyword,
+    );
   }
 
   @UseGuards(AuthGuard)

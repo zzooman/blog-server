@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Comment, Article, PrismaClient } from '@prisma/client';
-import { IResponse, ArticleDetail } from 'src/types/types';
+import { IResponse, ArticleDetail, ArticlesResponse } from 'src/types/types';
 
 @Injectable()
 export class ArticleService {
@@ -70,9 +70,42 @@ export class ArticleService {
     };
   }
 
-  async getAllArticles(): Promise<Article[]> {
-    const articles = await this.prisma.article.findMany();
-    return articles;
+  async getAllArticles(
+    page: number,
+    offset: number,
+    keyword?: string,
+  ): Promise<ArticlesResponse> {
+    const skip = (page - 1) * offset;
+    const where = keyword
+      ? {
+          OR: [
+            {
+              title: {
+                contains: keyword,
+              },
+            },
+            {
+              content: {
+                contains: keyword,
+              },
+            },
+          ],
+        }
+      : {};
+    const [articles, total] = await Promise.all([
+      this.prisma.article.findMany({
+        where,
+        skip,
+        take: offset,
+      }),
+      this.prisma.article.count({ where }),
+    ]);
+    const totalPage = Math.ceil(total / offset);
+    return {
+      articles,
+      page,
+      totalPage,
+    };
   }
 
   async updateArticle(
