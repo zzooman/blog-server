@@ -41,9 +41,14 @@ export class ArticleService {
   }
 
   async getArticle(id: number): Promise<IPost> {
-    const post = await this.prisma.post.findUnique({
+    const post = await this.prisma.post.update({
       where: {
         id,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
       },
     });
     return post;
@@ -54,7 +59,19 @@ export class ArticleService {
     return posts;
   }
 
-  async updateArticle(id: number, payload: Partial<IPost>): Promise<IPost> {
+  async updateArticle(
+    id: number,
+    payload: Partial<IPost>,
+    user: any,
+  ): Promise<IPost> {
+    const post = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (post.authorId !== user.id) {
+      throw new BadRequestException('작성자만 수정할 수 있습니다');
+    }
     const updatedPost = await this.prisma.post.update({
       where: {
         id,
@@ -66,7 +83,15 @@ export class ArticleService {
     return updatedPost;
   }
 
-  async deleteArticle(id: number): Promise<IPost> {
+  async deleteArticle(id: number, user: any): Promise<IPost> {
+    const post = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (post.authorId !== user.id) {
+      throw new BadRequestException('작성자만 삭제할 수 있습니다');
+    }
     const deletedPost = await this.prisma.post.delete({
       where: {
         id,

@@ -38,16 +38,26 @@ export class ArticleController {
     return await this.articleService.getAllArticles();
   }
 
+  @UseGuards(AuthGuard)
   @Put('/:id')
   async update(
+    @Request() req: Request & { user: any },
     @Param('id') id: string,
     @Body() body: CreateArticleDto,
   ): Promise<IPost> {
-    return await this.articleService.updateArticle(parseInt(id), body);
+    return await this.articleService.updateArticle(
+      parseInt(id),
+      body,
+      req.user,
+    );
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/:id')
-  async delete(@Param('id') id: string): Promise<IPost> {
-    return await this.articleService.deleteArticle(parseInt(id));
+  async delete(
+    @Request() req: Request & { user: any },
+    @Param('id') id: string,
+  ): Promise<IPost> {
+    return await this.articleService.deleteArticle(parseInt(id), req.user);
   }
 }
