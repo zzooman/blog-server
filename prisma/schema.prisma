@@ -17,6 +17,8 @@ model User {
   password String 
   division Division 
   posts Post[]  
+  comments Comment[]
+  likes Likes[]
 }
 
 model Post {
@@ -25,11 +27,33 @@ model Post {
   content     String
   lowContent  String    
   published   Boolean   @default(true)  
-  thumbnail   String?
-  likes       Int       @default(0)
+  thumbnail   String?  
   views       Int       @default(0)
   authorId    Int
   author      User      @relation(fields: [authorId], references: [id])
+  comments    Comment[] 
+  likes       Likes[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id        Int      @default(autoincrement()) @id
+  content   String    
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Likes {
+  id      Int   @default(autoincrement()) @id
+  userId  Int
+  user    User  @relation(fields: [userId], references: [id])
+  postId  Int  
+  post    Post  @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
