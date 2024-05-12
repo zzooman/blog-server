@@ -44,6 +44,7 @@ export interface ArticlesResponse {
   articles: Article[];
   page: number;
   totalPage: number;
+  keyword?: string;
 }
 
 export interface IResponse<T> {

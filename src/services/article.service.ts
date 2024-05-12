@@ -105,6 +105,7 @@ export class ArticleService {
       articles,
       page,
       totalPage,
+      ...(keyword && { keyword }),
     };
   }
 
