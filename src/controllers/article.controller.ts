@@ -12,7 +12,7 @@ import {
 import { Comment, Post as IPost } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
-import { CreateArticleDto } from 'src/types/dto';
+import { CreateArticleDto, CreateCommentDto } from 'src/types/dto';
 import { IResponse } from 'src/types/types';
 
 @Controller('/article')
@@ -81,7 +81,7 @@ export class ArticleController {
   async comment(
     @Request() req: Request & { user: any },
     @Param('id') id: string,
-    @Body() body: { content: string },
+    @Body() body: CreateCommentDto,
   ): Promise<IResponse<Comment>> {
     return await this.articleService.commentArticle(
       parseInt(id),

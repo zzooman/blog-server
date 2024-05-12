@@ -36,3 +36,8 @@ export class CreateArticleDto {
   @ApiProperty({ required: false })
   published: boolean;
 }
+
+export class CreateCommentDto {
+  @ApiProperty()
+  content: string;
+}
