@@ -13,7 +13,7 @@ import { Comment, Post as IPost } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
 import { CreateArticleDto, CreateCommentDto } from 'src/types/dto';
-import { IResponse } from 'src/types/types';
+import { IResponse, PostDetail } from 'src/types/types';
 
 @Controller('/article')
 export class ArticleController {
@@ -29,8 +29,11 @@ export class ArticleController {
   }
 
   @Get('/:id')
-  async read(@Param('id') id: string): Promise<IPost> {
-    return await this.articleService.getArticle(parseInt(id));
+  async read(
+    @Request() req: Request & { user: any },
+    @Param('id') id: string,
+  ): Promise<PostDetail> {
+    return await this.articleService.getArticle(parseInt(id), req.user);
   }
 
   @Get()
@@ -65,7 +68,7 @@ export class ArticleController {
   async like(
     @Request() req: Request & { user: any },
     @Param('id') id: string,
-  ): Promise<IResponse<IPost>> {
+  ): Promise<IResponse<{ isLiked: boolean }>> {
     return await this.articleService.likeArticle(parseInt(id), req.user);
   }
 
@@ -73,7 +76,7 @@ export class ArticleController {
   async unlike(
     @Request() req: Request & { user: any },
     @Param('id') id: string,
-  ): Promise<IResponse<IPost>> {
+  ): Promise<IResponse<{ isLiked: boolean }>> {
     return await this.articleService.unlikeArticle(parseInt(id), req.user);
   }
 
@@ -82,7 +85,7 @@ export class ArticleController {
     @Request() req: Request & { user: any },
     @Param('id') id: string,
     @Body() body: CreateCommentDto,
-  ): Promise<IResponse<Comment>> {
+  ): Promise<IResponse<Comment[]>> {
     return await this.articleService.commentArticle(
       parseInt(id),
       body.content,
@@ -95,7 +98,7 @@ export class ArticleController {
     @Request() req: Request & { user: any },
     @Param('id') id: string,
     @Param('commentId') commentId: string,
-  ): Promise<IResponse<Comment>> {
+  ): Promise<IResponse<Comment[]>> {
     return await this.articleService.deleteComment(
       parseInt(id),
       parseInt(commentId),

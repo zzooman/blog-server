@@ -1,4 +1,4 @@
-import { $Enums } from '@prisma/client';
+import { $Enums, Comment } from '@prisma/client';
 
 export interface User {
   id: number;
@@ -25,6 +25,19 @@ export interface MemberLoginResponse {
   employeeTeam: unknown;
   gender: string;
   userExternalId: string;
+}
+
+export interface PostDetail {
+  id: number;
+  title: string;
+  content: string;
+  lowContent: string;
+  authorId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  views: number;
+  isLiked: boolean;
+  comments: Comment[];
 }
 
 export interface IResponse<T> {

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Comment, Post, PrismaClient } from '@prisma/client';
-import { IResponse } from 'src/types/types';
+import { IResponse, PostDetail } from 'src/types/types';
 
 @Injectable()
 export class ArticleService {
@@ -40,7 +40,7 @@ export class ArticleService {
     };
   }
 
-  async getArticle(id: number): Promise<Post> {
+  async getArticle(id: number, user: any): Promise<PostDetail> {
     const post = await this.prisma.post.update({
       where: {
         id,
@@ -51,7 +51,23 @@ export class ArticleService {
         },
       },
     });
-    return post;
+    const isLiked = await this.prisma.likes.findFirst({
+      where: {
+        postId: id,
+        userId: user.id,
+      },
+    });
+    const comments = await this.prisma.comment.findMany({
+      where: {
+        postId: id,
+      },
+    });
+
+    return {
+      ...post,
+      comments,
+      isLiked: !!isLiked,
+    };
   }
 
   async getAllArticles(): Promise<Post[]> {
@@ -100,7 +116,10 @@ export class ArticleService {
     return deletedPost;
   }
 
-  async likeArticle(id: number, user: any): Promise<IResponse<Post>> {
+  async likeArticle(
+    id: number,
+    user: any,
+  ): Promise<IResponse<{ isLiked: boolean }>> {
     const article = await this.prisma.post.findUnique({
       where: {
         id,
@@ -109,7 +128,7 @@ export class ArticleService {
     if (!article) {
       throw new BadRequestException('게시글이 존재하지 않습니다');
     }
-    const likeArticle = await this.prisma.post.update({
+    await this.prisma.post.update({
       where: {
         id,
       },
@@ -124,11 +143,14 @@ export class ArticleService {
     return {
       status: 200,
       message: '게시글 좋아요 성공',
-      data: likeArticle,
+      data: { isLiked: true },
     };
   }
 
-  async unlikeArticle(id: number, user: any): Promise<IResponse<Post>> {
+  async unlikeArticle(
+    id: number,
+    user: any,
+  ): Promise<IResponse<{ isLiked: boolean }>> {
     const article = await this.prisma.post.findUnique({
       where: {
         id,
@@ -137,7 +159,7 @@ export class ArticleService {
     if (!article) {
       throw new BadRequestException('게시글이 존재하지 않습니다');
     }
-    const unlikeArticle = await this.prisma.post.update({
+    await this.prisma.post.update({
       where: {
         id,
       },
@@ -152,7 +174,7 @@ export class ArticleService {
     return {
       status: 200,
       message: '게시글 좋아요 취소 성공',
-      data: unlikeArticle,
+      data: { isLiked: false },
     };
   }
 
@@ -160,7 +182,7 @@ export class ArticleService {
     id: number,
     content: string,
     user: any,
-  ): Promise<IResponse<Comment>> {
+  ): Promise<IResponse<Comment[]>> {
     const article = await this.prisma.post.findUnique({
       where: {
         id,
@@ -169,17 +191,22 @@ export class ArticleService {
     if (!article) {
       throw new BadRequestException('게시글이 존재하지 않습니다');
     }
-    const commentArticle = await this.prisma.comment.create({
+    await this.prisma.comment.create({
       data: {
         content,
         authorId: user.id,
         postId: id,
       },
     });
+    const allComments = await this.prisma.comment.findMany({
+      where: {
+        postId: id,
+      },
+    });
     return {
       status: 200,
       message: '댓글 작성 성공',
-      data: commentArticle,
+      data: allComments,
     };
   }
 
@@ -187,7 +214,7 @@ export class ArticleService {
     id: number,
     commentId: number,
     user: any,
-  ): Promise<IResponse<Comment>> {
+  ): Promise<IResponse<Comment[]>> {
     const comment = await this.prisma.comment.findUnique({
       where: {
         id: commentId,
@@ -199,15 +226,20 @@ export class ArticleService {
     if (comment.authorId !== user.id) {
       throw new BadRequestException('작성자만 삭제할 수 있습니다');
     }
-    const deleteComment = await this.prisma.comment.delete({
+    await this.prisma.comment.delete({
       where: {
         id: commentId,
+      },
+    });
+    const allComments = await this.prisma.comment.findMany({
+      where: {
+        postId: id,
       },
     });
     return {
       status: 200,
       message: '댓글 삭제 성공',
-      data: deleteComment,
+      data: allComments,
     };
   }
 }
