@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Post as IPost, PrismaClient } from '@prisma/client';
+import { Comment, Post, PrismaClient } from '@prisma/client';
 import { IResponse } from 'src/types/types';
 
 @Injectable()
@@ -10,9 +10,9 @@ export class ArticleService {
   }
 
   async createArticle(
-    payload: Partial<IPost>,
+    payload: Partial<Post>,
     user: any,
-  ): Promise<IResponse<IPost>> {
+  ): Promise<IResponse<Post>> {
     if (!payload.title) {
       throw new BadRequestException('제목을 입력해주세요');
     }
@@ -40,7 +40,7 @@ export class ArticleService {
     };
   }
 
-  async getArticle(id: number): Promise<IPost> {
+  async getArticle(id: number): Promise<Post> {
     const post = await this.prisma.post.update({
       where: {
         id,
@@ -54,16 +54,16 @@ export class ArticleService {
     return post;
   }
 
-  async getAllArticles(): Promise<IPost[]> {
+  async getAllArticles(): Promise<Post[]> {
     const posts = await this.prisma.post.findMany();
     return posts;
   }
 
   async updateArticle(
     id: number,
-    payload: Partial<IPost>,
+    payload: Partial<Post>,
     user: any,
-  ): Promise<IPost> {
+  ): Promise<Post> {
     const post = await this.prisma.post.findUnique({
       where: {
         id,
@@ -83,7 +83,7 @@ export class ArticleService {
     return updatedPost;
   }
 
-  async deleteArticle(id: number, user: any): Promise<IPost> {
+  async deleteArticle(id: number, user: any): Promise<Post> {
     const post = await this.prisma.post.findUnique({
       where: {
         id,
@@ -98,5 +98,116 @@ export class ArticleService {
       },
     });
     return deletedPost;
+  }
+
+  async likeArticle(id: number, user: any): Promise<IResponse<Post>> {
+    const article = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!article) {
+      throw new BadRequestException('게시글이 존재하지 않습니다');
+    }
+    const likeArticle = await this.prisma.post.update({
+      where: {
+        id,
+      },
+      data: {
+        likes: {
+          connect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+    return {
+      status: 200,
+      message: '게시글 좋아요 성공',
+      data: likeArticle,
+    };
+  }
+
+  async unlikeArticle(id: number, user: any): Promise<IResponse<Post>> {
+    const article = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!article) {
+      throw new BadRequestException('게시글이 존재하지 않습니다');
+    }
+    const unlikeArticle = await this.prisma.post.update({
+      where: {
+        id,
+      },
+      data: {
+        likes: {
+          disconnect: {
+            id: user.id,
+          },
+        },
+      },
+    });
+    return {
+      status: 200,
+      message: '게시글 좋아요 취소 성공',
+      data: unlikeArticle,
+    };
+  }
+
+  async commentArticle(
+    id: number,
+    content: string,
+    user: any,
+  ): Promise<IResponse<Comment>> {
+    const article = await this.prisma.post.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!article) {
+      throw new BadRequestException('게시글이 존재하지 않습니다');
+    }
+    const commentArticle = await this.prisma.comment.create({
+      data: {
+        content,
+        authorId: user.id,
+        postId: id,
+      },
+    });
+    return {
+      status: 200,
+      message: '댓글 작성 성공',
+      data: commentArticle,
+    };
+  }
+
+  async deleteComment(
+    id: number,
+    commentId: number,
+    user: any,
+  ): Promise<IResponse<Comment>> {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+    if (!comment) {
+      throw new BadRequestException('댓글이 존재하지 않습니다');
+    }
+    if (comment.authorId !== user.id) {
+      throw new BadRequestException('작성자만 삭제할 수 있습니다');
+    }
+    const deleteComment = await this.prisma.comment.delete({
+      where: {
+        id: commentId,
+      },
+    });
+    return {
+      status: 200,
+      message: '댓글 삭제 성공',
+      data: deleteComment,
+    };
   }
 }

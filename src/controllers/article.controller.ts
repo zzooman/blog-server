@@ -9,7 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { Post as IPost } from '@prisma/client';
+import { Comment, Post as IPost } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
 import { CreateArticleDto } from 'src/types/dto';
@@ -59,5 +59,47 @@ export class ArticleController {
     @Param('id') id: string,
   ): Promise<IPost> {
     return await this.articleService.deleteArticle(parseInt(id), req.user);
+  }
+
+  @Put('/:id/like')
+  async like(
+    @Request() req: Request & { user: any },
+    @Param('id') id: string,
+  ): Promise<IResponse<IPost>> {
+    return await this.articleService.likeArticle(parseInt(id), req.user);
+  }
+
+  @Put('/:id/unlike')
+  async unlike(
+    @Request() req: Request & { user: any },
+    @Param('id') id: string,
+  ): Promise<IResponse<IPost>> {
+    return await this.articleService.unlikeArticle(parseInt(id), req.user);
+  }
+
+  @Post('/:id/comment')
+  async comment(
+    @Request() req: Request & { user: any },
+    @Param('id') id: string,
+    @Body() body: { content: string },
+  ): Promise<IResponse<Comment>> {
+    return await this.articleService.commentArticle(
+      parseInt(id),
+      body.content,
+      req.user,
+    );
+  }
+
+  @Delete('/:id/comment/:commentId')
+  async deleteComment(
+    @Request() req: Request & { user: any },
+    @Param('id') id: string,
+    @Param('commentId') commentId: string,
+  ): Promise<IResponse<Comment>> {
+    return await this.articleService.deleteComment(
+      parseInt(id),
+      parseInt(commentId),
+      req.user,
+    );
   }
 }
