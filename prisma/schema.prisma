@@ -16,12 +16,12 @@ model User {
   username String  @unique  
   password String 
   division Division 
-  posts Post[]  
+  articles Article[]  
   comments Comment[]
   likes Likes[]
 }
 
-model Post {
+model Article {
   id          Int       @default(autoincrement()) @id
   title       String
   content     String
@@ -40,8 +40,8 @@ model Post {
 model Comment {
   id        Int      @default(autoincrement()) @id
   content   String    
-  postId    Int
-  post      Post     @relation(fields: [postId], references: [id])
+  articleId    Int
+  article      Article     @relation(fields: [articleId], references: [id])
   authorId  Int
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
@@ -52,8 +52,8 @@ model Likes {
   id      Int   @default(autoincrement()) @id
   userId  Int
   user    User  @relation(fields: [userId], references: [id])
-  postId  Int  
-  post    Post  @relation(fields: [postId], references: [id])
+  articleId  Int  
+  article    Article  @relation(fields: [articleId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

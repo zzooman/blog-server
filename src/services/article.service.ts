@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Comment, Post, PrismaClient } from '@prisma/client';
-import { IResponse, PostDetail } from 'src/types/types';
+import { Comment, Article, PrismaClient } from '@prisma/client';
+import { IResponse, ArticleDetail } from 'src/types/types';
 
 @Injectable()
 export class ArticleService {
@@ -10,9 +10,9 @@ export class ArticleService {
   }
 
   async createArticle(
-    payload: Partial<Post>,
+    payload: Partial<Article>,
     user: any,
-  ): Promise<IResponse<Post>> {
+  ): Promise<IResponse<Article>> {
     if (!payload.title) {
       throw new BadRequestException('제목을 입력해주세요');
     }
@@ -25,7 +25,7 @@ export class ArticleService {
     if (!user) {
       throw new BadRequestException('로그인이 필요합니다');
     }
-    const newPost = await this.prisma.post.create({
+    const newArticle = await this.prisma.article.create({
       data: {
         title: payload.title,
         content: payload.content,
@@ -36,12 +36,12 @@ export class ArticleService {
     return {
       status: 200,
       message: '게시글 생성 성공',
-      data: newPost,
+      data: newArticle,
     };
   }
 
-  async getArticle(id: number, user: any): Promise<PostDetail> {
-    const post = await this.prisma.post.update({
+  async getArticle(id: number, user: any): Promise<ArticleDetail> {
+    const article = await this.prisma.article.update({
       where: {
         id,
       },
@@ -53,42 +53,42 @@ export class ArticleService {
     });
     const isLiked = await this.prisma.likes.findFirst({
       where: {
-        postId: id,
+        articleId: id,
         userId: user.id,
       },
     });
     const comments = await this.prisma.comment.findMany({
       where: {
-        postId: id,
+        articleId: id,
       },
     });
 
     return {
-      ...post,
+      ...article,
       comments,
       isLiked: !!isLiked,
     };
   }
 
-  async getAllArticles(): Promise<Post[]> {
-    const posts = await this.prisma.post.findMany();
-    return posts;
+  async getAllArticles(): Promise<Article[]> {
+    const articles = await this.prisma.article.findMany();
+    return articles;
   }
 
   async updateArticle(
     id: number,
-    payload: Partial<Post>,
+    payload: Partial<Article>,
     user: any,
-  ): Promise<Post> {
-    const post = await this.prisma.post.findUnique({
+  ): Promise<Article> {
+    const article = await this.prisma.article.findUnique({
       where: {
         id,
       },
     });
-    if (post.authorId !== user.id) {
+    if (article.authorId !== user.id) {
       throw new BadRequestException('작성자만 수정할 수 있습니다');
     }
-    const updatedPost = await this.prisma.post.update({
+    const updatedArticle = await this.prisma.article.update({
       where: {
         id,
       },
@@ -96,31 +96,31 @@ export class ArticleService {
         ...payload,
       },
     });
-    return updatedPost;
+    return updatedArticle;
   }
 
-  async deleteArticle(id: number, user: any): Promise<Post> {
-    const post = await this.prisma.post.findUnique({
+  async deleteArticle(id: number, user: any): Promise<Article> {
+    const article = await this.prisma.article.findUnique({
       where: {
         id,
       },
     });
-    if (post.authorId !== user.id) {
+    if (article.authorId !== user.id) {
       throw new BadRequestException('작성자만 삭제할 수 있습니다');
     }
-    const deletedPost = await this.prisma.post.delete({
+    const deletedArticle = await this.prisma.article.delete({
       where: {
         id,
       },
     });
-    return deletedPost;
+    return deletedArticle;
   }
 
   async likeArticle(
     id: number,
     user: any,
   ): Promise<IResponse<{ isLiked: boolean }>> {
-    const article = await this.prisma.post.findUnique({
+    const article = await this.prisma.article.findUnique({
       where: {
         id,
       },
@@ -128,7 +128,7 @@ export class ArticleService {
     if (!article) {
       throw new BadRequestException('게시글이 존재하지 않습니다');
     }
-    await this.prisma.post.update({
+    await this.prisma.article.update({
       where: {
         id,
       },
@@ -151,7 +151,7 @@ export class ArticleService {
     id: number,
     user: any,
   ): Promise<IResponse<{ isLiked: boolean }>> {
-    const article = await this.prisma.post.findUnique({
+    const article = await this.prisma.article.findUnique({
       where: {
         id,
       },
@@ -159,7 +159,7 @@ export class ArticleService {
     if (!article) {
       throw new BadRequestException('게시글이 존재하지 않습니다');
     }
-    await this.prisma.post.update({
+    await this.prisma.article.update({
       where: {
         id,
       },
@@ -183,7 +183,7 @@ export class ArticleService {
     content: string,
     user: any,
   ): Promise<IResponse<Comment[]>> {
-    const article = await this.prisma.post.findUnique({
+    const article = await this.prisma.article.findUnique({
       where: {
         id,
       },
@@ -195,12 +195,12 @@ export class ArticleService {
       data: {
         content,
         authorId: user.id,
-        postId: id,
+        articleId: id,
       },
     });
     const allComments = await this.prisma.comment.findMany({
       where: {
-        postId: id,
+        articleId: id,
       },
     });
     return {
@@ -233,7 +233,7 @@ export class ArticleService {
     });
     const allComments = await this.prisma.comment.findMany({
       where: {
-        postId: id,
+        articleId: id,
       },
     });
     return {

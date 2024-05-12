@@ -27,7 +27,7 @@ export interface MemberLoginResponse {
   userExternalId: string;
 }
 
-export interface PostDetail {
+export interface ArticleDetail {
   id: number;
   title: string;
   content: string;

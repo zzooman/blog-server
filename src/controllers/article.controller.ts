@@ -9,11 +9,11 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { Comment, Post as IPost } from '@prisma/client';
+import { Comment, Article } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
 import { CreateArticleDto, CreateCommentDto } from 'src/types/dto';
-import { IResponse, PostDetail } from 'src/types/types';
+import { IResponse, ArticleDetail } from 'src/types/types';
 
 @Controller('/article')
 export class ArticleController {
@@ -24,7 +24,7 @@ export class ArticleController {
   async create(
     @Request() req: Request & { user: any },
     @Body() body: CreateArticleDto,
-  ): Promise<IResponse<IPost>> {
+  ): Promise<IResponse<Article>> {
     return await this.articleService.createArticle(body, req.user);
   }
 
@@ -32,12 +32,12 @@ export class ArticleController {
   async read(
     @Request() req: Request & { user: any },
     @Param('id') id: string,
-  ): Promise<PostDetail> {
+  ): Promise<ArticleDetail> {
     return await this.articleService.getArticle(parseInt(id), req.user);
   }
 
   @Get()
-  async readAll(): Promise<IPost[]> {
+  async readAll(): Promise<Article[]> {
     return await this.articleService.getAllArticles();
   }
 
@@ -47,7 +47,7 @@ export class ArticleController {
     @Request() req: Request & { user: any },
     @Param('id') id: string,
     @Body() body: CreateArticleDto,
-  ): Promise<IPost> {
+  ): Promise<Article> {
     return await this.articleService.updateArticle(
       parseInt(id),
       body,
@@ -60,7 +60,7 @@ export class ArticleController {
   async delete(
     @Request() req: Request & { user: any },
     @Param('id') id: string,
-  ): Promise<IPost> {
+  ): Promise<Article> {
     return await this.articleService.deleteArticle(parseInt(id), req.user);
   }
 
