@@ -41,7 +41,7 @@ export class ArticleController {
   async readAll(
     @Query('page') page: string,
     @Query('offset') offset: string,
-    @Query('keyword') keyword: string,
+    @Query('keyword') keyword?: string,
   ): Promise<ArticlesResponse> {
     return await this.articleService.getAllArticles(
       Number(page),
