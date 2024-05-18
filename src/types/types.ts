@@ -40,8 +40,15 @@ export interface ArticleDetail {
   comments: Comment[];
 }
 
+export interface ArticleWithAuthor extends Article {
+  author: User;
+}
+
+export interface ArticleWithAuthor extends Article {
+  author: User;
+}
 export interface ArticlesResponse {
-  articles: Article[];
+  articles: ArticleWithAuthor[];
   page: number;
   totalPage: number;
   keyword?: string;

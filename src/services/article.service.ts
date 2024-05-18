@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Comment, Article, PrismaClient } from '@prisma/client';
-import { IResponse, ArticleDetail, ArticlesResponse } from 'src/types/types';
+import { Comment, Article, PrismaClient, User } from '@prisma/client';
+import { IResponse, ArticleDetail, ArticlesResponse, ArticleWithAuthor } from 'src/types/types';
 
 @Injectable()
 export class ArticleService {
@@ -9,10 +9,7 @@ export class ArticleService {
     this.prisma = new PrismaClient();
   }
 
-  async createArticle(
-    payload: Partial<Article>,
-    user: any,
-  ): Promise<IResponse<Article>> {
+  async createArticle(payload: Partial<Article>, user: any): Promise<IResponse<Article>> {
     if (!payload.title) {
       throw new BadRequestException('제목을 입력해주세요');
     }
@@ -22,7 +19,12 @@ export class ArticleService {
     if (!payload.lowContent) {
       throw new BadRequestException('lowContent 값을 보내주세요');
     }
-    if (!user) {
+    const author = await this.prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+    });
+    if (author?.id !== user?.id) {
       throw new BadRequestException('로그인이 필요합니다');
     }
     const newArticle = await this.prisma.article.create({
@@ -41,6 +43,14 @@ export class ArticleService {
   }
 
   async getArticle(id: number, user: any): Promise<ArticleDetail> {
+    const articleExists = await this.prisma.article.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!articleExists) {
+      throw new BadRequestException('게시글이 존재하지 않습니다');
+    }
     const article = await this.prisma.article.update({
       where: {
         id,
@@ -54,7 +64,7 @@ export class ArticleService {
     const isLiked = await this.prisma.likes.findFirst({
       where: {
         articleId: id,
-        userId: user.id,
+        userId: user?.id,
       },
     });
     const comments = await this.prisma.comment.findMany({
@@ -70,11 +80,7 @@ export class ArticleService {
     };
   }
 
-  async getAllArticles(
-    page: number,
-    offset: number,
-    keyword?: string,
-  ): Promise<ArticlesResponse> {
+  async getAllArticles(page: number, offset: number, keyword?: string): Promise<ArticlesResponse> {
     const skip = (page - 1) * offset;
     const where = keyword
       ? {
@@ -101,19 +107,29 @@ export class ArticleService {
       this.prisma.article.count({ where }),
     ]);
     const totalPage = Math.ceil(total / offset);
+    const articlesWithAuthor = await Promise.all(
+      articles.map(async article => {
+        const author: User = await this.prisma.user.findUnique({
+          where: {
+            id: article.authorId,
+          },
+        });
+        return {
+          author,
+          ...article,
+        };
+      })
+    );
+
     return {
-      articles,
+      articles: articlesWithAuthor as ArticleWithAuthor[],
       page,
       totalPage,
       ...(keyword && { keyword }),
     };
   }
 
-  async updateArticle(
-    id: number,
-    payload: Partial<Article>,
-    user: any,
-  ): Promise<Article> {
+  async updateArticle(id: number, payload: Partial<Article>, user: any): Promise<Article> {
     const article = await this.prisma.article.findUnique({
       where: {
         id,
@@ -150,10 +166,7 @@ export class ArticleService {
     return deletedArticle;
   }
 
-  async likeArticle(
-    id: number,
-    user: any,
-  ): Promise<IResponse<{ isLiked: boolean }>> {
+  async likeArticle(id: number, user: any): Promise<IResponse<{ isLiked: boolean }>> {
     const article = await this.prisma.article.findUnique({
       where: {
         id,
@@ -181,10 +194,7 @@ export class ArticleService {
     };
   }
 
-  async unlikeArticle(
-    id: number,
-    user: any,
-  ): Promise<IResponse<{ isLiked: boolean }>> {
+  async unlikeArticle(id: number, user: any): Promise<IResponse<{ isLiked: boolean }>> {
     const article = await this.prisma.article.findUnique({
       where: {
         id,
@@ -212,11 +222,7 @@ export class ArticleService {
     };
   }
 
-  async commentArticle(
-    id: number,
-    content: string,
-    user: any,
-  ): Promise<IResponse<Comment[]>> {
+  async commentArticle(id: number, content: string, user: any): Promise<IResponse<Comment[]>> {
     const article = await this.prisma.article.findUnique({
       where: {
         id,
@@ -244,11 +250,7 @@ export class ArticleService {
     };
   }
 
-  async deleteComment(
-    id: number,
-    commentId: number,
-    user: any,
-  ): Promise<IResponse<Comment[]>> {
+  async deleteComment(id: number, commentId: number, user: any): Promise<IResponse<Comment[]>> {
     const comment = await this.prisma.comment.findUnique({
       where: {
         id: commentId,
