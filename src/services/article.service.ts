@@ -107,22 +107,25 @@ export class ArticleService {
       this.prisma.article.count({ where }),
     ]);
     const totalPage = Math.ceil(total / offset);
-    const articlesWithAuthor = await Promise.all(
-      articles.map(async article => {
-        const author: User = await this.prisma.user.findUnique({
-          where: {
-            id: article.authorId,
-          },
-        });
-        return {
-          author,
-          ...article,
-        };
-      })
-    );
+    const articlesWithAuthor = articles.map(async article => {
+      const author: Omit<User, 'password'> = await this.prisma.user.findUnique({
+        where: {
+          id: article.authorId,
+        },
+        select: {
+          id: true,
+          username: true,
+          division: true,
+        },
+      });
+      return {
+        author,
+        ...article,
+      };
+    });
 
     return {
-      articles: articlesWithAuthor as ArticleWithAuthor[],
+      articles: await Promise.all(articlesWithAuthor),
       page,
       totalPage,
       ...(keyword && { keyword }),

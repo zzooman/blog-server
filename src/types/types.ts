@@ -41,12 +41,9 @@ export interface ArticleDetail {
 }
 
 export interface ArticleWithAuthor extends Article {
-  author: User;
+  author: Omit<User, 'password'>;
 }
 
-export interface ArticleWithAuthor extends Article {
-  author: User;
-}
 export interface ArticlesResponse {
   articles: ArticleWithAuthor[];
   page: number;
