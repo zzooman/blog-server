@@ -33,6 +33,8 @@ export class ArticleService {
         content: payload.content,
         rowContent: payload.rowContent,
         authorId: user.id,
+        ...(payload.thumbnail && { thumbnail: payload.thumbnail }),
+        ...(payload.published && { published: payload.published }),
       },
     });
     return {
