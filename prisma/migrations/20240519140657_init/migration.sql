@@ -17,7 +17,7 @@ CREATE TABLE "Article" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "lowContent" TEXT NOT NULL,
+    "rowContent" TEXT NOT NULL,
     "published" BOOLEAN NOT NULL DEFAULT true,
     "thumbnail" TEXT,
     "views" INTEGER NOT NULL DEFAULT 0,
