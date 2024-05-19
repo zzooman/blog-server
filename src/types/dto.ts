@@ -3,12 +3,23 @@ import { $Enums } from '@prisma/client';
 
 export class CreateUserDto {
   @ApiProperty()
-  username: string;
+  email: string;
 
   @ApiProperty()
   password: string;
 
   @ApiProperty()
+  division: $Enums.Division;
+}
+
+export class UpdateUserDto {
+  @ApiProperty({ required: false })
+  username: string;
+
+  @ApiProperty({ required: false })
+  password: string;
+
+  @ApiProperty({ required: false })
   division: $Enums.Division;
 }
 

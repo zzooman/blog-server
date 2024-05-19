@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { CreateUserDto } from 'src/types/dto';
+import { CreateUserDto, UpdateUserDto } from 'src/types/dto';
 import { IResponse, User } from 'src/types/types';
 
 @Injectable()
@@ -13,20 +13,21 @@ export class UserService {
     return user;
   }
 
-  async create({
-    username,
-    password,
-    division,
-  }: CreateUserDto): Promise<IResponse<User>> {
+  async create({ email, password, division }: CreateUserDto): Promise<IResponse<User>> {
     const prisma = new PrismaClient();
     const user = await prisma.user.findUnique({
-      where: { username },
+      where: { email },
     });
     if (user) {
       throw new ForbiddenException('이미 존재하는 유저입니다.');
     }
+    const username = email.split('@mustit')[0];
+    if (!username) {
+      throw new ForbiddenException('올바른 이메일 형식이 아닙니다. @mustit.co.kr로 끝나는 이메일을 입력해주세요.');
+    }
     const newUser = await prisma.user.create({
       data: {
+        email,
         username,
         password,
         division,
@@ -39,15 +40,13 @@ export class UserService {
     };
   }
 
-  async update(
-    username: string,
-    { username: newUsername, password, division }: CreateUserDto,
-  ): Promise<User> {
+  async update(username: string, { username: newUsername, password, division }: UpdateUserDto): Promise<User> {
     const prisma = new PrismaClient();
     const user = await prisma.user.update({
       where: { username },
       data: {
         username: newUsername,
+        email: newUsername + '@mustit.co.kr',
         password,
         division,
       },

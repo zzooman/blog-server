@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Comment, Article, PrismaClient, User } from '@prisma/client';
-import { IResponse, ArticleDetail, ArticlesResponse, ArticleWithAuthor } from 'src/types/types';
+import { IResponse, ArticleDetail, ArticlesResponse } from 'src/types/types';
 
 @Injectable()
 export class ArticleService {
@@ -115,6 +115,7 @@ export class ArticleService {
         select: {
           id: true,
           username: true,
+          email: true,
           division: true,
         },
       });
