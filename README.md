@@ -13,10 +13,11 @@
 
 1. .env에 아래 내용 추가
    DATABASE_URL="postgresql://postgres:1033@localhost:5432/mustit?schema=public"
-1. npm install
-1. npm run dev
-1. npx prisma generate
-1. npx prisma migrate dev --name init
+2. npm install
+3. npm run dev
+4. npx prisma generate
+5. npx prisma migrate dev --name init
+6. 브라우저에 localhost:9900/api 입력 -> swagger 문서가 보이면 실행이 잘 된것입니다.
 
 ## prod 모드로 실행방법 (docker-compose 사용)
 
