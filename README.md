@@ -5,6 +5,7 @@
 1. docker pull postgres:16
    - 위 명령어가 안될 경우
    * docker logout
+   * docker login
    * docker pull postgres:16
    * 또는 docker pull docker.io/library/postgres:16
 2. docker run --name mustit-blog -e POSTGRES_PASSWORD=1033 -p 5432:5432 -d postgres:16
