@@ -228,7 +228,7 @@ export class ArticleService {
     };
   }
 
-  async commentArticle(id: number, content: string, user: any): Promise<IResponse<Comment[]>> {
+  async commentArticle(id: number, content: string, user: any, parentId?: number): Promise<IResponse<Comment[]>> {
     const article = await this.prisma.article.findUnique({
       where: {
         id,
@@ -242,6 +242,7 @@ export class ArticleService {
         content,
         authorId: user.id,
         articleId: id,
+        ...(parentId && { parentId }),
       },
     });
     const allComments = await this.prisma.comment.findMany({

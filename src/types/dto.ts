@@ -51,6 +51,9 @@ export class CreateArticleDto {
 export class CreateCommentDto {
   @ApiProperty()
   content: string;
+
+  @ApiProperty()
+  parentId: number;
 }
 
 export class GetArticlesDto {

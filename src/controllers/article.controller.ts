@@ -41,6 +41,7 @@ export class ArticleController {
     return await this.articleService.deleteArticle(parseInt(id), req.user);
   }
 
+  @UseGuards(AuthGuard)
   @Put('/:id/like')
   async like(
     @Request() req: Request & { user: any },
@@ -49,6 +50,7 @@ export class ArticleController {
     return await this.articleService.likeArticle(parseInt(id), req.user);
   }
 
+  @UseGuards(AuthGuard)
   @Put('/:id/unlike')
   async unlike(
     @Request() req: Request & { user: any },
@@ -57,15 +59,17 @@ export class ArticleController {
     return await this.articleService.unlikeArticle(parseInt(id), req.user);
   }
 
+  @UseGuards(AuthGuard)
   @Post('/:id/comment')
   async comment(
     @Request() req: Request & { user: any },
     @Param('id') id: string,
     @Body() body: CreateCommentDto
   ): Promise<IResponse<Comment[]>> {
-    return await this.articleService.commentArticle(parseInt(id), body.content, req.user);
+    return await this.articleService.commentArticle(parseInt(id), body.content, req.user, body.parentId);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/:id/comment/:commentId')
   async deleteComment(
     @Request() req: Request & { user: any },
