@@ -62,14 +62,14 @@ export class UserService {
     return user;
   }
 
-  async mydata(): Promise<{ user: User; articles: Article[] }> {
+  async mydata(user: any): Promise<{ user: User; articles: Article[] }> {
     const prisma = new PrismaClient();
-    const user = await prisma.user.findUnique({
-      where: { username: 'admin' },
+    const me = await prisma.user.findUnique({
+      where: { id: user.id },
     });
     const articles = await prisma.article.findMany({
       where: { authorId: user.id },
     });
-    return { user, articles };
+    return { user: me, articles };
   }
 }

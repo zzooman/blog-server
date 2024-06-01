@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Put, Delete, UseGuards, Request } from '@nestjs/common';
 import { Article } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { UserService } from 'src/services/user.service';
@@ -27,8 +27,8 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Get('/mydata')
-  async mydata(): Promise<{ user: User; articles: Article[] }> {
-    return await this.userService.mydata();
+  async mydata(@Request() req: Request & { user: any }): Promise<{ user: User; articles: Article[] }> {
+    return await this.userService.mydata(req.user);
   }
 
   @Put(':username')
