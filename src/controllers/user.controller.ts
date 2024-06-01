@@ -1,4 +1,6 @@
-import { Body, Controller, Get, Post, Param, Put, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Article } from '@prisma/client';
+import { AuthGuard } from 'src/middleware/authGuard';
 import { UserService } from 'src/services/user.service';
 import { CreateUserDto, UpdateUserDto } from 'src/types/dto';
 import { IResponse, User } from 'src/types/types';
@@ -21,6 +23,12 @@ export class UserController {
       email: user.email,
       division: user.division,
     };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/mydata')
+  async mydata(): Promise<{ user: User; articles: Article[] }> {
+    return await this.userService.mydata();
   }
 
   @Put(':username')

@@ -1,5 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { Article, PrismaClient } from '@prisma/client';
 import { CreateUserDto, UpdateUserDto } from 'src/types/dto';
 import { IResponse, User } from 'src/types/types';
 
@@ -60,5 +60,16 @@ export class UserService {
       where: { username },
     });
     return user;
+  }
+
+  async mydata(): Promise<{ user: User; articles: Article[] }> {
+    const prisma = new PrismaClient();
+    const user = await prisma.user.findUnique({
+      where: { username: 'admin' },
+    });
+    const articles = await prisma.article.findMany({
+      where: { authorId: user.id },
+    });
+    return { user, articles };
   }
 }
