@@ -12,14 +12,15 @@ enum Division {
   backend  
 }
 model User {
-  id    Int     @default(autoincrement()) @id
-  username String  @unique  
-  email    String  @unique
-  password String 
-  division Division 
-  articles Article[]  
-  comments Comment[]
-  likes Likes[]
+  id        Int     @default(autoincrement()) @id
+  username  String  @unique  
+  email     String  @unique
+  password  String 
+  division  Division 
+
+  articles  Article[]  
+  comments  Comment[]
+  likes     Likes[]
 }
 
 model Article {
@@ -31,30 +32,35 @@ model Article {
   thumbnail   String?  
   views       Int       @default(0)
   authorId    Int
-  author      User      @relation(fields: [authorId], references: [id])
-  comments    Comment[] 
-  likes       Likes[]
+  author      User      @relation(fields: [authorId], references: [id])  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  comments    Comment[] 
+  likes       Likes[]
 }
 
 model Comment {
-  id        Int      @default(autoincrement()) @id
-  content   String    
-  articleId    Int
-  article      Article     @relation(fields: [articleId], references: [id])
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int       @default(autoincrement()) @id
+  content       String    
+  articleId     Int
+  article       Article   @relation(fields: [articleId], references: [id])
+  parentId      Int?
+  parent        Comment?  @relation("ChildComments", fields: [parentId], references: [id])
+  authorId      Int
+  author        User      @relation(fields: [authorId], references: [id])    
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  childComments Comment[] @relation("ChildComments")
 }
 
 model Likes {
-  id      Int   @default(autoincrement()) @id
-  userId  Int
-  user    User  @relation(fields: [userId], references: [id])
-  articleId  Int  
-  article    Article  @relation(fields: [articleId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int       @default(autoincrement()) @id
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  articleId   Int  
+  article     Article   @relation(fields: [articleId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
