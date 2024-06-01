@@ -3,6 +3,7 @@ import { $Enums, Article, Comment } from '@prisma/client';
 export interface User {
   id: number;
   username: string;
+  email: string;
   password: string;
   division: $Enums.Division;
 }

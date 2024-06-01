@@ -13,8 +13,14 @@ export class UserController {
   }
 
   @Get(':username')
-  async findOne(@Param('username') username: string): Promise<User> {
-    return this.userService.findOne(username);
+  async findOne(@Param('username') username: string): Promise<Omit<User, 'password'>> {
+    const user = await this.userService.findOne(username);
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      division: user.division,
+    };
   }
 
   @Put(':username')
