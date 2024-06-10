@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
 import { ACCESS_TOKEN, USER_NAME } from 'src/types/constants';
 
-const tokenBlacklist: Set<string> = new Set();
+export const tokenBlacklist: Set<string> = new Set();
 
 @Injectable()
 export class AuthService {
@@ -50,7 +50,7 @@ export class AuthService {
     });
   }
 
-  isTokenBlacklisted(token: string): boolean {
+  static isTokenBlacklisted(token: string): boolean {
     return tokenBlacklist.has(token);
   }
 }

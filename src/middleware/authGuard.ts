@@ -5,10 +5,7 @@ import { ACCESS_TOKEN, jwtConstants } from 'src/types/constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private jwtService: JwtService
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -16,7 +13,7 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException('토큰이 없습니다.');
     }
-    if (this.authService.isTokenBlacklisted(token)) {
+    if (AuthService.isTokenBlacklisted(token)) {
       throw new UnauthorizedException('토큰이 블랙리스트에 있습니다.');
     }
     try {
