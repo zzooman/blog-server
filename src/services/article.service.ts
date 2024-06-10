@@ -16,8 +16,8 @@ export class ArticleService {
     if (!payload.content) {
       throw new BadRequestException('내용을 입력해주세요');
     }
-    if (!payload.rowContent) {
-      throw new BadRequestException('rowContent 값을 보내주세요');
+    if (!payload.rawContent) {
+      throw new BadRequestException('rawContent 값을 보내주세요');
     }
     const author = await this.prisma.user.findUnique({
       where: {
@@ -31,7 +31,7 @@ export class ArticleService {
       data: {
         title: payload.title,
         content: payload.content,
-        rowContent: payload.rowContent,
+        rawContent: payload.rawContent,
         authorId: user.id,
         ...(payload.thumbnail && { thumbnail: payload.thumbnail }),
         ...(payload.published && { published: payload.published }),
@@ -109,7 +109,7 @@ export class ArticleService {
       this.prisma.article.count({ where }),
     ]);
     const totalPage = Math.ceil(total / offset);
-    const articlesWithAuthor = articles.map(async article => {
+    const articleForList = articles.map(async article => {
       const author: Omit<User, 'password'> = await this.prisma.user.findUnique({
         where: {
           id: article.authorId,
@@ -121,14 +121,17 @@ export class ArticleService {
           division: true,
         },
       });
+
+      const {content, ...articleWithoutBody} = article;
       return {
         author,
-        ...article,
+        preview : article.content.slice(0, 200),
+        ...articleWithoutBody,
       };
     });
 
     return {
-      articles: await Promise.all(articlesWithAuthor),
+      articles: await Promise.all(articleForList),
       page,
       totalPage,
       ...(keyword && { keyword }),
