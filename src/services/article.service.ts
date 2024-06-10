@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Comment, Article, PrismaClient, User } from '@prisma/client';
-import { IResponse, ArticleDetail, ArticlesResponse } from 'src/types/types';
+import { IResponse, ArticleDetail, ArticlesResponse, ArticleWithAuthor } from 'src/types/types';
 
 @Injectable()
 export class ArticleService {
@@ -286,16 +286,35 @@ export class ArticleService {
     };
   }
 
-  async getMyArticles(user: any): Promise<IResponse<Article[]>> {
+  async getMyArticles(user: any): Promise<IResponse<ArticleWithAuthor[]>> {
     const articles = await this.prisma.article.findMany({
       where: {
         authorId: user.id,
       },
     });
+
+    const articlesWithAuthor = articles.map(async article => {
+      const author: Omit<User, 'password'> = await this.prisma.user.findUnique({
+        where: {
+          id: article.authorId,
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          division: true,
+        },
+      });
+      return {
+        author,
+        ...article,
+      };
+    });
+
     return {
       status: 200,
       message: '내 게시글 조회 성공',
-      data: articles,
+      data: await Promise.all(articlesWithAuthor),
     };
   }
 }

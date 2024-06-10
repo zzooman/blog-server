@@ -3,7 +3,7 @@ import { Comment, Article } from '@prisma/client';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { ArticleService } from 'src/services/article.service';
 import { CreateArticleDto, CreateCommentDto, GetArticlesDto } from 'src/types/dto';
-import { IResponse, ArticleDetail, ArticlesResponse } from 'src/types/types';
+import { IResponse, ArticleDetail, ArticlesResponse, ArticleWithAuthor } from 'src/types/types';
 
 @Controller('/article')
 export class ArticleController {
@@ -17,7 +17,7 @@ export class ArticleController {
 
   @UseGuards(AuthGuard)
   @Get('/me') // Get my articles
-  async readMyArticles(@Request() req: Request & { user: any }): Promise<IResponse<Article[]>> {
+  async readMyArticles(@Request() req: Request & { user: any }): Promise<IResponse<ArticleWithAuthor[]>> {
     return await this.articleService.getMyArticles(req.user);
   }
 
