@@ -181,6 +181,19 @@ export class ArticleService {
     return deletedArticle;
   }
 
+  async articleLikeinfo(id: number, user: any): Promise<{ likes: number, isLiked: boolean }> {
+    const likeInfo = await this.prisma.$queryRaw`
+      SELECT COUNT(*) AS likes
+           , EXISTS(
+                 SELECT 1 
+                   FROM "Likes" 
+                  WHERE "articleId" = ${id} 
+                    AND "userId" = ${user.id}) AS isLiked
+        FROM "Likes" 
+       WHERE "articleId" = ${id}`;
+    return { likes: Number(likeInfo[0].likes), isLiked: likeInfo[0].isliked };
+  }
+
   async likeArticle(id: number, user: any): Promise<IResponse<{ isLiked: boolean }>> {
     const article = await this.prisma.article.findUnique({
       where: {

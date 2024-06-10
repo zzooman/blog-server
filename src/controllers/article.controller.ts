@@ -46,13 +46,22 @@ export class ArticleController {
   async delete(@Request() req: Request & { user: any }, @Param('id') id: string): Promise<Article> {
     return await this.articleService.deleteArticle(parseInt(id), req.user);
   }
+  
+  @UseGuards(AuthGuard)
+  @Get('/:id/likeinfo')
+  async likeinfo(
+    @Request() req: Request & { user: any },
+    @Param('id') id: string
+  ): Promise<{likes:number, isLiked: boolean }> {
+    return await this.articleService.articleLikeinfo(parseInt(id), req.user);
+  }
 
   @UseGuards(AuthGuard)
   @Put('/:id/like')
   async like(
     @Request() req: Request & { user: any },
     @Param('id') id: string
-  ): Promise<IResponse<{ isLiked: boolean }>> {
+  ): Promise<IResponse<{isLiked: boolean }>> {
     return await this.articleService.likeArticle(parseInt(id), req.user);
   }
 
