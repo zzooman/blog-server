@@ -15,6 +15,12 @@ export class ArticleController {
     return await this.articleService.createArticle(body, req.user);
   }
 
+  @UseGuards(AuthGuard)
+  @Get('/me') // Get my articles
+  async readMyArticles(@Request() req: Request & { user: any }): Promise<Article[]> {
+    return await this.articleService.getMyArticles(req.user);
+  }
+
   @Get('/:id')
   async read(@Request() req: Request & { user: any }, @Param('id') id: string): Promise<ArticleDetail> {
     return await this.articleService.getArticle(parseInt(id), req.user);

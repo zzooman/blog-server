@@ -285,4 +285,13 @@ export class ArticleService {
       data: allComments,
     };
   }
+
+  async getMyArticles(user: any): Promise<Article[]> {
+    const articles = await this.prisma.article.findMany({
+      where: {
+        authorId: user.id,
+      },
+    });
+    return articles;
+  }
 }
