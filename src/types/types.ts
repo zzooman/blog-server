@@ -45,8 +45,12 @@ export interface ArticleWithAuthor extends Article {
   author: Omit<User, 'password'>;
 }
 
+export interface ArticleForList extends Omit<ArticleWithAuthor, 'content'> {
+  preview: string;
+}
+
 export interface ArticlesResponse {
-  articles: ArticleWithAuthor[];
+  articles: ArticleForList[];
   page: number;
   totalPage: number;
   keyword?: string;

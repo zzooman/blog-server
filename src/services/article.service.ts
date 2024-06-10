@@ -109,7 +109,7 @@ export class ArticleService {
       this.prisma.article.count({ where }),
     ]);
     const totalPage = Math.ceil(total / offset);
-    const articlesWithAuthor = articles.map(async article => {
+    const articleForList = articles.map(async article => {
       const author: Omit<User, 'password'> = await this.prisma.user.findUnique({
         where: {
           id: article.authorId,
@@ -121,14 +121,17 @@ export class ArticleService {
           division: true,
         },
       });
+
+      const {content, ...articleWithoutBody} = article;
       return {
         author,
-        ...article,
+        preview : article.content.slice(0, 200),
+        ...articleWithoutBody,
       };
     });
 
     return {
-      articles: await Promise.all(articlesWithAuthor),
+      articles: await Promise.all(articleForList),
       page,
       totalPage,
       ...(keyword && { keyword }),
