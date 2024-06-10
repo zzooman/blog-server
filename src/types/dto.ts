@@ -39,7 +39,7 @@ export class CreateArticleDto {
   content: string;
 
   @ApiProperty()
-  rowContent: string;
+  rawContent: string;
 
   @ApiProperty({ required: false })
   thumbnail?: string;

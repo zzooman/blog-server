@@ -27,7 +27,7 @@ model Article {
   id          Int       @default(autoincrement()) @id
   title       String
   content     String
-  rowContent  String    
+  rawContent  String
   published   Boolean   @default(true)  
   thumbnail   String?  
   views       Int       @default(0)

@@ -32,7 +32,7 @@ export interface ArticleDetail {
   id: number;
   title: string;
   content: string;
-  rowContent: string;
+  rawContent: string;
   authorId: number;
   createdAt: Date;
   updatedAt: Date;

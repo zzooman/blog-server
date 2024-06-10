@@ -16,8 +16,8 @@ export class ArticleService {
     if (!payload.content) {
       throw new BadRequestException('내용을 입력해주세요');
     }
-    if (!payload.rowContent) {
-      throw new BadRequestException('rowContent 값을 보내주세요');
+    if (!payload.rawContent) {
+      throw new BadRequestException('rawContent 값을 보내주세요');
     }
     const author = await this.prisma.user.findUnique({
       where: {
@@ -31,7 +31,7 @@ export class ArticleService {
       data: {
         title: payload.title,
         content: payload.content,
-        rowContent: payload.rowContent,
+        rawContent: payload.rawContent,
         authorId: user.id,
         ...(payload.thumbnail && { thumbnail: payload.thumbnail }),
         ...(payload.published && { published: payload.published }),
