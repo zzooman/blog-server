@@ -286,12 +286,16 @@ export class ArticleService {
     };
   }
 
-  async getMyArticles(user: any): Promise<Article[]> {
+  async getMyArticles(user: any): Promise<IResponse<Article[]>> {
     const articles = await this.prisma.article.findMany({
       where: {
         authorId: user.id,
       },
     });
-    return articles;
+    return {
+      status: 200,
+      message: '내 게시글 조회 성공',
+      data: articles,
+    };
   }
 }

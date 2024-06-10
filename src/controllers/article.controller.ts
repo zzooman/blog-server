@@ -17,7 +17,7 @@ export class ArticleController {
 
   @UseGuards(AuthGuard)
   @Get('/me') // Get my articles
-  async readMyArticles(@Request() req: Request & { user: any }): Promise<Article[]> {
+  async readMyArticles(@Request() req: Request & { user: any }): Promise<IResponse<Article[]>> {
     return await this.articleService.getMyArticles(req.user);
   }
 
