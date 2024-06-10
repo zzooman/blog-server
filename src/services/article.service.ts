@@ -69,6 +69,11 @@ export class ArticleService {
         userId: user?.id,
       },
     });
+    const likes = await this.prisma.likes.count({
+      where: {
+        articleId: id,
+      },
+    });
     const comments = await this.prisma.comment.findMany({
       where: {
         articleId: id,
@@ -78,6 +83,7 @@ export class ArticleService {
     return {
       ...article,
       comments,
+      likes,
       isLiked: !!isLiked,
     };
   }
@@ -187,8 +193,13 @@ export class ArticleService {
       },
       data: {
         likes: {
-          connect: {
-            id: user.id,
+          connectOrCreate: {
+            where: {
+              id: user.id,
+            },
+            create: {
+              userId: user.id,
+            },
           },
         },
       },
@@ -206,21 +217,24 @@ export class ArticleService {
         id,
       },
     });
+
     if (!article) {
       throw new BadRequestException('게시글이 존재하지 않습니다');
     }
-    await this.prisma.article.update({
+
+    const like = await this.prisma.likes.findFirst({
       where: {
-        id,
-      },
-      data: {
-        likes: {
-          disconnect: {
-            id: user.id,
-          },
-        },
+        articleId: id,
+        userId: user.id,
       },
     });
+
+    await this.prisma.likes.delete({
+      where: {
+        id: like.id,
+      },
+    });
+
     return {
       status: 200,
       message: '게시글 좋아요 취소 성공',
