@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Request,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthGuard } from 'src/middleware/authGuard';
 import { AuthService } from 'src/services/auth.service';
@@ -21,11 +11,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() payload: LoginDto, @Res() response: Response) {
-    return this.authService.signIn(
-      payload.username,
-      payload.password,
-      response,
-    );
+    return this.authService.signIn(payload.username, payload.password, response);
+  }
+
+  @Get('logout')
+  signOut(@Request() req: Request & { cookies: { [key: string]: string } }, @Res() response: Response) {
+    return this.authService.signOut(response, req.cookies['access_token']);
   }
 
   @UseGuards(AuthGuard)
