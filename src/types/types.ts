@@ -38,6 +38,7 @@ export interface ArticleDetail {
   updatedAt: Date;
   views: number;
   isLiked: boolean;
+  likes: number;
   comments: Comment[];
 }
 
