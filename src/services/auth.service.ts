@@ -26,11 +26,13 @@ export class AuthService {
     response.cookie(ACCESS_TOKEN, access_token, {
       httpOnly: true,
       secure: false,
+      sameSite: 'none',
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
     response.cookie(USER_NAME, user.username, {
       httpOnly: false,
       secure: false,
+      sameSite: 'none',
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     });
     return response.json({
