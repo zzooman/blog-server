@@ -14,7 +14,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: true,
     credentials: true, // 크로스 도메인 요청에도 쿠키 전송
   });
   app.use(cookieParser());
