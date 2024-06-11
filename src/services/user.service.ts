@@ -25,6 +25,11 @@ export class UserService {
     if (!username) {
       throw new ForbiddenException('올바른 이메일 형식이 아닙니다. @mustit.co.kr로 끝나는 이메일을 입력해주세요.');
     }
+    // validation
+    if(password.length < 8) {
+      throw new ForbiddenException('8글자 이상의 비밀번호를 입력해주세요.');
+    }
+
     const newUser = await prisma.user.create({
       data: {
         email,
